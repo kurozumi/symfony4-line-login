@@ -14,7 +14,6 @@ use KnpU\OAuth2ClientBundle\Security\Authenticator\SocialAuthenticator;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\User;
-use Firebase\JWT\JWT;
 
 class LineAuthenticator extends SocialAuthenticator
 {
@@ -42,12 +41,6 @@ class LineAuthenticator extends SocialAuthenticator
         $lineUser = $this->getLineClient()
                 ->fetchUserFromToken($credentials);
         
-        $id_token = $credentials->getValues()["id_token"];
-        $tokens = explode(".", $id_token);
-        
-        $lineUserInfo = JWT::urlsafeB64Decode($tokens[1]);
-        $email = json_decode($lineUserInfo)->email;
-        
         $existingUser = $this->em->getRepository(User::class)
                 ->findOneBy(['line_id' => $lineUser->getId()]);
         
@@ -55,12 +48,13 @@ class LineAuthenticator extends SocialAuthenticator
             return $existingUser;
         }
         
+        // メアドを取得できるようにLine Devの管理画面でOpenID Connect権限取得申請してください
         $user = $this->em->getRepository(User::class)
-                ->findOneBy(['email' => $email]);
+                ->findOneBy(['email' => $lineUser->getEmail()]);
         
         if (!$user) {
             $user = new User();
-            $user->setEmail($email);
+            $user->setEmail($lineUser->getEmail());
         }
         
         $user->setLineId($lineUser->getId());
