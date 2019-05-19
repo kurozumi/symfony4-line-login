@@ -20,3 +20,7 @@ firebase/php-jwt
 ## LINE_CLIENT_IDとLINE_CLIENT_SECRETを設定
 
 .envに取得したLINE_CLIENT_IDとLINE_CLIENT_SECRETを設定してください。
+
+## Lineのメアドの取得について
+
+メアドを取得するにはLine Devの管理画面でOpenID Connect権限取得申請をする必要があります
