@@ -35,7 +35,7 @@ class LineUser implements ResourceOwnerInterface
     /**
      * Get perferred display name.
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -48,7 +48,7 @@ class LineUser implements ResourceOwnerInterface
         $tokens = explode(".", $id_token);
         
         $payload = JWT::urlsafeB64Decode($tokens[1]);
-        return isset(json_decode($payload)->email) ? json_decode($payload)->email : false;
+        return isset(json_decode($payload)->email) ? json_decode($payload)->email : null;
     }
 
     /**
